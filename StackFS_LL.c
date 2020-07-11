@@ -2107,9 +2107,7 @@ static void stackfs_ll_init(void *userdata,
 			ERROR("\tExtFUSE eBPF bytecode loaded: ctxt=0x%lx fd=%d\n",
 				(unsigned long)lo->ebpf_ctxt, lo->ebpf_ctxt->ctrl_fd);
 			conn->want |= FUSE_CAP_FS_ACCEL;
-			conn->ebpf_root_fd = rootfd;
-			conn->ebpf_prog_fd = lo->ebpf_ctxt->ctrl_fd;
-			conn->ebpf_map_fd = 0;
+			conn->extfuse_prog_fd = lo->ebpf_ctxt->ctrl_fd;
 		}
 	} else {
 			ERROR("\tExtFUSE not enabled flags:0x%lx ebpf_flag:0x%lx mask:0x%lx\n",
