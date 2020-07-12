@@ -398,9 +398,9 @@ int create_entry(fuse_req_t req, struct lo_inode* pinode,
 		pthread_mutex_lock(&lo_data->mutex);
 		inode = lookup_child_by_name_locked(pinode, name);
     	if (inode)
-        	acquire_node_locked(inode);
+			acquire_node_locked(inode);
     	else
-        	inode = create_node_locked(pinode, name);
+			inode = create_node_locked(pinode, name);
 		if (!inode) {
 			ERROR("[%d] \t %s(%s) node creation failed: %s\n",
 					gettid(), op, name, strerror(errno));
@@ -2097,8 +2097,9 @@ static void stackfs_ll_init(void *userdata,
 {
 	struct lo_data *lo = (struct lo_data*) userdata;
 
-	if (conn->capable & FUSE_CAP_FS_ACCEL) {
-		INFO("Loading ExtFUSE eBPF bytecode /tmp/extfuse.o\n");
+	if (conn->capable & FUSE_CAP_EXTFUSE) {
+		/* FIXME hard-coded bpf file path */
+		INFO("ALERT: Attempting to load ExtFUSE eBPF bytecode from /tmp/extfuse.o\n");
 		lo->ebpf_ctxt = ebpf_init("/tmp/extfuse.o");
 		if (!lo->ebpf_ctxt) {
 			ERROR("\tENABLE_EXTFUSE failed %s\n",
@@ -2106,7 +2107,7 @@ static void stackfs_ll_init(void *userdata,
 		} else {
 			ERROR("\tExtFUSE eBPF bytecode loaded: ctxt=0x%lx fd=%d\n",
 				(unsigned long)lo->ebpf_ctxt, lo->ebpf_ctxt->ctrl_fd);
-			conn->want |= FUSE_CAP_FS_ACCEL;
+			conn->want |= FUSE_CAP_EXTFUSE;
 			conn->extfuse_prog_fd = lo->ebpf_ctxt->ctrl_fd;
 		}
 	} else {

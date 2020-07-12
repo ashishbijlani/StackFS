@@ -13,7 +13,7 @@
 #include <fuse_lowlevel.h>
 
 #include <ebpf.h>
-#include <ebpf/lookup.h>
+#include <bpf/lookup.h>
 
 void *lookup_init(struct fuse_conn_info *conn);
 int lookup_insert(ebpf_context_t *ctxt, uint64_t pino, const char *name,

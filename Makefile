@@ -1,21 +1,21 @@
 all: StackFS_ll
 
-CFLAGS += -D_FILE_OFFSET_BITS=64 -Wall -Werror -DENABLE_STATS #-DDEBUG 
-STACKFS_LL_CFLAGS = -I$(HOME)/libfuse/include
-STACKFS_LL_LDFLAGS = -L$(HOME)/libfuse/lib/.libs -lfuse3 -lpthread
+ifndef EXTFUSE_REPO_PATH
+	$(error EXTFUSE_REPO_PATH is not set)
+endif
+
+CFLAGS += -D_FILE_OFFSET_BITS=64 -Wall -Werror #-DENABLE_STATS -DDEBUG
 
 STACKFS_LL_SRCS = StackFS_LL.c
 
-STACKFS_ACCEL_LL_CFLAGS = \
-	-I/lib/modules/$(shell uname -r)/build/usr/include \
-	-I$(HOME)/projects/libfuse/include \
-	-I$(HOME)/projects/libfuse/lib \
-	-I$(HOME)/projects/extfuse/include \
-	-I$(HOME)/projects/extfuse
+STACKFS_LL_CFLAGS = \
+	$(shell pkg-config --cflags fuse3) \
+	-I$(EXTFUSE_REPO_PATH)/include \
+	-I$(EXTFUSE_REPO_PATH)
 
-STACKFS_ACCEL_LL_LDFLAGS = \
-	-L$(HOME)/projects/libfuse/lib/.libs -lfuse3 -lpthread \
-	-L$(HOME)/projects/extfuse -lextfuse
+STACKFS_LL_LDFLAGS = \
+	$(shell pkg-config --libs fuse3) \
+	-L$(EXTFUSE_REPO_PATH) -lextfuse
 
 # Use '-DUSE_SPLICE=0' for default fuse (no optimizations)
 # Use '-DUSE_SPLICE=1' for optimized fuse
@@ -26,9 +26,13 @@ STACKFS_ACCEL_LL_LDFLAGS = \
 
 # ExtFUSE enabled, LOOKUP and ATTR requests are cached in the kernel
 StackFS_ll: $(STACKFS_LL_SRCS) attr.c lookup.c
-	gcc $(CFLAGS) -DUSE_SPLICE=1 -DENABLE_EXTFUSE_LOOKUP \
-		-DENABLE_EXTFUSE_ATTR -DENABLE_EXTFUSE $(STACKFS_ACCEL_LL_CFLAGS) \
-		$^ $(STACKFS_ACCEL_LL_LDFLAGS) -o $@
+	gcc $(CFLAGS) \
+		-DUSE_SPLICE=1 \
+		-DENABLE_EXTFUSE_LOOKUP \
+		-DENABLE_EXTFUSE_ATTR \
+		-DENABLE_EXTFUSE \
+		$(STACKFS_LL_CFLAGS) $^ \
+		$(STACKFS_LL_LDFLAGS) -o $@
 
 clean:
 	rm -f StackFS_ll

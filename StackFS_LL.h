@@ -6,7 +6,6 @@
 
 #ifdef ENABLE_EXTFUSE
 #include <ebpf.h>
-#include <notify.h>
 #endif
 
 
@@ -65,7 +64,7 @@ struct lo_dirptr {
 };
 
 struct stackFS_info {
-	char	*rootDir;
+	char	*root;
 	char	*statsDir;/* Path to copy any statistics details */
 	double	attr_valid;/* Time in secs for attribute validation */
 	double entry_valid; /* Time in sec for entry validation */
@@ -77,6 +76,14 @@ struct stackFS_info {
 #define INFO(fmt, ...)	fprintf(stdout, fmt, ##__VA_ARGS__)
 #else
 #define INFO(fmt, ...)
+#endif
+
+#ifndef TRACE
+#define generate_start_time(x)
+#define generate_end_time(x)
+#define fuse_session_add_statsDir(x,y)
+#define fuse_session_remove_statsDir(x)
+#define populate_time(x)
 #endif
 
 #define ERROR(fmt, ...)	fprintf(stderr, fmt, ##__VA_ARGS__)

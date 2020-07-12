@@ -27,7 +27,6 @@
 
 #include "lookup.h"
 #include "attr.h"
-#include <fuse_misc.h>
 
 #define gettid getpid
 

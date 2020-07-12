@@ -9,7 +9,11 @@
 #include <stdio.h>
 
 #include <ebpf.h>
-#include <ebpf/attr.h>
+#include <bpf/attr.h>
+
+#define ST_ATIM_NSEC(stbuf) ((stbuf)->st_atim.tv_nsec)
+#define ST_CTIM_NSEC(stbuf) ((stbuf)->st_ctim.tv_nsec)
+#define ST_MTIM_NSEC(stbuf) ((stbuf)->st_mtim.tv_nsec)
 
 void *attr_init(struct fuse_conn_info *conn);
 
