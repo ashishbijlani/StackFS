@@ -231,8 +231,9 @@ struct lo_inode *create_node_locked(struct lo_inode *parent, const char *name)
     /* store this for mapping (debugging) */
     node->lo_ino = (uintptr_t) node;
     node->deleted = 0;
+#ifdef ENABLE_EXTFUSE
 	node->pino = parent->ino == FUSE_ROOT_ID ? FUSE_ROOT_ID : (uintptr_t) parent;
-
+#endif
     acquire_node_locked(node);
     add_node_to_parent_locked(node, parent);
     return node;
