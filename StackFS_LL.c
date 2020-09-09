@@ -508,7 +508,7 @@ static void stackfs_ll_symlink(fuse_req_t req, const char *link,
 	}
 }
 
-#if 0
+#if HAVE_ACCESS
 static void stackfs_ll_access(fuse_req_t req, fuse_ino_t ino, int mask)
 {
 	ssize_t res;
